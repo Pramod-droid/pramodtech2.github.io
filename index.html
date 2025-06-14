@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pramod Tech Connect</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #d1c4e9, #bbdefb);
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin: 20px 0;
+      color: #4a148c;
+      text-align: center;
+    }
+    .video-container {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    video {
+      width: 300px;
+      height: 200px;
+      border-radius: 12px;
+      border: 3px solid #6a1b9a;
+      background: black;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    .controls {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      width: 90%;
+      max-width: 600px;
+      margin-bottom: 20px;
+    }
+    .controls input, .controls button {
+      padding: 10px;
+      margin: 10px 5px;
+      font-size: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #6a1b9a;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #4a148c;
+    }
+    .room-info {
+      font-weight: bold;
+      color: #311b92;
+    }
+    .file-area, .chat-area {
+      background: #f3e5f5;
+      padding: 15px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 600px;
+      margin-top: 15px;
+    }
+    .file-link {
+      display: block;
+      margin-top: 5px;
+      color: #0d47a1;
+      text-decoration: underline;
+    }
+    .chat-messages {
+      max-height: 200px;
+      overflow-y: auto;
+      background: #fff;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    .chat-messages .you {
+      background: #dcedc8;
+      color: #33691e;
+      padding: 8px 12px;
+      border-radius: 15px;
+      margin: 6px;
+      text-align: right;
+      max-width: 80%;
+      align-self: flex-end;
+    }
+    .chat-messages .other {
+      background: #fff9c4;
+      color: #f57f17;
+      padding: 8px 12px;
+      border-radius: 15px;
+      margin: 6px;
+      max-width: 80%;
+      align-self: flex-start;
+    }
+    #chatInput {
+      width: calc(100% - 90px);
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+    #sendChat {
+      padding: 10px 20px;
+      background-color: #4caf50;
+      border: none;
+      color: white;
+      border-radius: 10px;
+      margin-left: 10px;
+      font-weight: bold;
+    }
+    #sendChat:hover {
+      background-color: #388e3c;
+    }
+    .media-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 10px 0;
+    }
+    .progress {
+      height: 10px;
+      background: #e0e0e0;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+    .progress-bar {
+      height: 100%;
+      background: #6a1b9a;
+      width: 0%;
+    }
+  </style>
+</head>
+<body>
+  <h1>Pramod Tech Connect</h1>
+
+  <div class="video-container">
+    <video id="localVideo" autoplay muted></video>
+    <video id="remoteVideo" autoplay></video>
+  </div>
+
+  <div class="controls">
+    <input type="text" id="roomInput" placeholder="Enter Room Code" />
+    <button onclick="joinRoom()">Join Room</button>
+    <div class="media-buttons">
+      <button onclick="toggleMic()">Mute/Unmute Mic</button>
+      <button onclick="toggleVideo()">Start/Stop Video</button>
+      <button onclick="startScreenShare()">Share Screen</button>
+    </div>
+  </div>
+
+  <div class="file-area">
+    <label>Send File: <input type="file" id="fileInput" /></label>
+    <div id="fileLinks"></div>
+  </div>
+
+  <div class="chat-area">
+    <div class="chat-messages" id="chatMessages"></div>
+    <div style="display: flex; align-items: center;">
+      <input type="text" id="chatInput" placeholder="Type your message..." />
+      <button id="sendChat">Send</button>
+    </div>
+  </div>
+
+  <!-- Working JavaScript -->
+  <script>
+    let localStream;
+
+    async function setupMedia() {
+      try {
+        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        document.getElementById('localVideo').srcObject = localStream;
+      } catch (err) {
+        alert("Could not access camera and microphone. Please allow permission.");
+        console.error(err);
+      }
+    }
+
+    async function joinRoom() {
+      await setupMedia();
+      alert('This is just a demo. WebRTC signaling is not implemented in this version.');
+    }
+
+    function toggleMic() {
+      if (localStream) {
+        localStream.getAudioTracks().forEach(track => track.enabled = !track.enabled);
+      }
+    }
+
+    function toggleVideo() {
+      if (localStream) {
+        localStream.getVideoTracks().forEach(track => track.enabled = !track.enabled);
+      }
+    }
+
+    async function startScreenShare() {
+      try {
+        const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+        document.getElementById('localVideo').srcObject = screenStream;
+      } catch (err) {
+        alert("Screen share not allowed");
+      }
+    }
+
+    document.getElementById("sendChat").onclick = () => {
+      const input = document.getElementById("chatInput");
+      const msg = input.value.trim();
+      if (!msg) return;
+      const chatBox = document.getElementById("chatMessages");
+      const newMsg = document.createElement("div");
+      newMsg.className = "you";
+      newMsg.innerText = msg;
+      chatBox.appendChild(newMsg);
+      input.value = "";
+    };
+
+    setupMedia();
+  </script>
+</body>
+</html>
